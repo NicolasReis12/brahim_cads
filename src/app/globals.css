@@ -1,26 +1,227 @@
 @import "tailwindcss";
 
+/*
+ * Brahim Cards — tokens de design
+ * Paleta derivada do logo: ardósia do escudo, dourado das letras e roxo do Gengar.
+ * Fundo é grafite quente (hue ~60) pra não competir com as fotos dos produtos.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: dark;
+
+  /* superfícies */
+  --canvas: oklch(0.185 0.006 62);
+  --surface: oklch(0.215 0.007 62);
+  --raised: oklch(0.25 0.008 62);
+  --sunken: oklch(0.165 0.006 62);
+  --line: oklch(0.32 0.009 62);
+  --line-strong: oklch(0.42 0.011 62);
+
+  /* texto */
+  --ink: oklch(0.955 0.008 85);
+  --ink-muted: oklch(0.78 0.012 75);
+  --ink-subtle: oklch(0.66 0.012 70);
+
+  /* marca */
+  --gold: oklch(0.83 0.13 86);
+  --gold-hover: oklch(0.88 0.12 90);
+  --gold-deep: oklch(0.7 0.12 80);
+  --on-gold: oklch(0.2 0.02 70);
+  --violet: oklch(0.72 0.14 305);
+  --violet-soft: oklch(0.3 0.06 305);
+
+  /* status */
+  --ok: oklch(0.8 0.14 152);
+  --warn: oklch(0.8 0.14 62);
+  --danger: oklch(0.7 0.17 25);
+
+  /* acento por jogo — só em etiquetas, filtros ativos e detalhes */
+  --game-pokemon: oklch(0.74 0.16 32);
+  --game-lorcana: oklch(0.76 0.1 245);
+  --game-one-piece: oklch(0.78 0.11 185);
+  --game-none: var(--ink-subtle);
+
+  --focus: var(--gold);
+  --header-h: 3.5rem;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-raised: var(--raised);
+  --color-sunken: var(--sunken);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-subtle: var(--ink-subtle);
+  --color-gold: var(--gold);
+  --color-gold-hover: var(--gold-hover);
+  --color-gold-deep: var(--gold-deep);
+  --color-on-gold: var(--on-gold);
+  --color-violet: var(--violet);
+  --color-violet-soft: var(--violet-soft);
+  --color-ok: var(--ok);
+  --color-warn: var(--warn);
+  --color-danger: var(--danger);
+  --color-game-pokemon: var(--game-pokemon);
+  --color-game-lorcana: var(--game-lorcana);
+  --color-game-one-piece: var(--game-one-piece);
+
+  --font-display: var(--font-archivo), "Arial Narrow", system-ui, sans-serif;
+  --font-sans: var(--font-instrument), system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", monospace;
+
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: 1rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  html {
+    background: var(--canvas);
+    color: var(--ink);
+    -webkit-tap-highlight-color: transparent;
+    /* nada deve estourar a largura; se algo estourar, não alarga o viewport no celular */
+    overflow-x: clip;
+    text-size-adjust: 100%;
+  }
+  body {
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    min-height: 100dvh;
+  }
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+  ::selection {
+    background: var(--gold);
+    color: var(--on-gold);
+  }
+  h1, h2, h3 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  [data-game="pokemon"] { --game: var(--game-pokemon); }
+  [data-game="lorcana"] { --game: var(--game-lorcana); }
+  [data-game="one-piece"] { --game: var(--game-one-piece); }
+}
+
+@layer components {
+  /* Título display: Archivo expandida, pesada, apertada */
+  .display {
+    font-family: var(--font-display);
+    font-variation-settings: "wdth" 125;
+    font-stretch: 125%;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+  /* Metadado em mono, estilo rodapé de carta */
+  .meta {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    line-height: 1rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--ink-subtle);
+  }
+  .container-page {
+    width: 100%;
+    max-width: 80rem;
+    margin-inline: auto;
+    padding-inline: 1rem;
+  }
+  @media (width >= 48rem) {
+    .container-page { padding-inline: 1.5rem; }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/*
+ * O único efeito temático: reflexo holográfico na foto do produto.
+ * Só aparece com mouse (hover real) e se a pessoa não pediu menos movimento.
+ */
+.holo {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.holo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    oklch(0.85 0.12 20 / 0.55) 40%,
+    oklch(0.9 0.12 95 / 0.55) 46%,
+    oklch(0.88 0.12 160 / 0.55) 52%,
+    oklch(0.82 0.12 250 / 0.55) 58%,
+    oklch(0.8 0.13 310 / 0.55) 64%,
+    transparent 72%
+  );
+  background-size: 260% 260%;
+  background-position: 100% 100%;
+  mix-blend-mode: color-dodge;
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .holo::after {
+    transition: opacity 250ms ease, background-position 900ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .group:hover .holo::after,
+  .holo:hover::after {
+    opacity: 0.45;
+    background-position: 0% 0%;
+  }
+}
+
+/* Skeleton */
+.skeleton {
+  background: linear-gradient(90deg, var(--surface) 0%, var(--raised) 50%, var(--surface) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+@keyframes shimmer {
+  to { background-position: -200% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton { animation: none; }
+}
+
+/* Barra de rolagem horizontal discreta em listas roláveis */
+.scroll-x {
+  overflow-x: auto;
+  scrollbar-width: none;
+  scroll-snap-type: x proximity;
+}
+.scroll-x::-webkit-scrollbar { display: none; }
+
+/* View Transitions: foto do produto morfando entre listagem e página */
+::view-transition {
+  pointer-events: none;
+}
+::view-transition-group(.product-photo) {
+  animation-duration: 380ms;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+::view-transition-group(site-header) {
+  animation: none;
+  z-index: 100;
+}
+::view-transition-old(site-header) { display: none; }
+::view-transition-new(site-header) { animation: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
 }

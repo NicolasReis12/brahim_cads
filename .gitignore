@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# dados do modo local e uploads feitos pelo painel em dev
+/.data
+/public/uploads
+!.env.example
+/.claude
